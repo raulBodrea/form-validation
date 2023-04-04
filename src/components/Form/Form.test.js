@@ -121,4 +121,37 @@ describe("Form", () => {
     );
     expect(error).not.toBeInTheDocument();
   });
+
+  it("invalidates emails without '@'", async () => {
+    const user = userEvent.setup();
+    render(<Form />);
+    const inputField = screen.queryByLabelText("Email");
+
+    await user.type(inputField, "hertaaeson");
+    let error = screen.queryByText("Emailul trebuie sa includa @");
+    expect(error).toBeInTheDocument();
+
+    await user.type(inputField, "@a");
+    error = screen.queryByText("Emailul trebuie sa includa @");
+    expect(error).not.toBeInTheDocument();
+  });
+
+  it("invalidates emails without alfanumeric chars before '@' ", async () => {
+    const user = userEvent.setup();
+    render(<Form />);
+    const inputField = screen.queryByLabelText("Email");
+
+    await user.type(inputField, "a**aaaaaav@");
+    let error = screen.queryByText(
+      "Emailul trebuie sa contina doar caractere alfanumerice, '+', '-', '_' si '.' inainte @"
+    );
+    expect(error).toBeInTheDocument();
+
+    await user.clear(inputField);
+    await user.type(inputField, "abb33aaaav@");
+    error = screen.queryByText(
+      "Emailul trebuie sa contina doar caractere alfanumerice, '+', '-', '_' si '.' inainte @"
+    );
+    expect(error).not.toBeInTheDocument();
+  });
 });
