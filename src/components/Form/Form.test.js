@@ -70,4 +70,70 @@ describe('Form', () => {
       expect(error).toBeInTheDocument();
     }
   );
+
+  it('invalidates an email starting with a special char', async () => {
+    const user = userEvent.setup();
+    render(<Form/>);
+    const inputField = screen.queryByLabelText('E-mail');
+
+    await user.type(inputField, '?');
+    const error = screen.queryByText(
+      'Mail-ul trebuie sa inceapa cu caractere alfanumerice');
+      expect(error).toBeInTheDocument();
+  })
+
+  it('invalidates an email not containing an `@`', async () => {
+    const user = userEvent.setup();
+    render(<Form/>);
+    const inputField = screen.queryByLabelText('E-mail');
+
+    await user.type(inputField, 'a');
+    const error = screen.queryByText(
+      'Mail-ul trebuie sa contina un `@`');
+      expect(error).toBeInTheDocument();
+  })
+
+  it('invalidates an email containing more than one `@`', async () => {
+    const user = userEvent.setup();
+    render(<Form/>);
+    const inputField = screen.queryByLabelText('E-mail');
+
+    await user.type(inputField, 'a@a@a');
+    const error = screen.queryByText(
+      'Mail-ul trebuie sa contina un singur `@`');
+      expect(error).toBeInTheDocument();
+  })
+
+  it('invalidates an email not containg a `.` after `@`', async () => {
+    const user = userEvent.setup();
+    render(<Form/>);
+    const inputField = screen.queryByLabelText('E-mail');
+
+    await user.type(inputField, 'ab@ab');
+    const error = screen.queryByText(
+      'Mail-ul trebuie sa contina un `.`');
+      expect(error).toBeInTheDocument();
+  })
+
+  it('invalidates an email not containg alphanum chars after `.`', async () => {
+    const user = userEvent.setup();
+    render(<Form/>);
+    const inputField = screen.queryByLabelText('E-mail');
+
+    await user.type(inputField, 'ab@gmail.');
+    const error = screen.queryByText(
+      'Mail-ul trebuie sa contina caractere alfanumerice dupa `.`');
+      expect(error).toBeInTheDocument();
+  })
+
+  it("accepts a valid email", async () => {
+    const user = userEvent.setup();
+    render(<Form/>);
+    const inputField  = screen.queryByLabelText("E-mail");
+
+    await user.type(inputField, "abc@gmail.com");
+    const error = screen.queryByTestId('mail_error');
+    expect(error).not.toBeInTheDocument();
+
+  })
 });

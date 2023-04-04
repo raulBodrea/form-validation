@@ -41,22 +41,24 @@ const Form = () => {
       setMailError("Mail-ul trebuie sa contina un `@`");
       return;
     }
-    if (!(noChars + alphaChars).includes(newMail[newMail.indexOf("@") - 1])) {
-      setMailError(
-        "Mail-ul trebuie sa contina caractere alfanumerice inainte de `@`"
-      );
-      return;
-    }
+    
     if (!(noChars + alphaChars).includes(newMail[newMail.indexOf("@") + 1])) {
       setMailError(
         "Mail-ul trebuie sa contina caractere alfanumerice dupa `@`"
       );
       return;
     }
-    if (!newMail.includes(".")) {
+
+    if(newMail.split("@").length > 2) {
+      setMailError("Mail-ul trebuie sa contina un singur `@`");
+      return;
+    }
+
+    if (!newMail.split("@")[1].includes(".")) {
       setMailError("Mail-ul trebuie sa contina un `.`");
       return;
     }
+
     if (!(noChars + alphaChars).includes(newMail[newMail.indexOf(".") + 1])) {
       setMailError(
         "Mail-ul trebuie sa contina caractere alfanumerice dupa `.`"
@@ -101,10 +103,9 @@ const Form = () => {
           max={20}
           onChange={handleMailChange}
         />
-        <p>{mailError}</p>
+        {mailError && <p data-testid='mail_error'>{mailError}</p>}
       </div>
     </div>
   );
 };
-
 export default Form;
